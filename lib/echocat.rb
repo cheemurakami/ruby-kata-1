@@ -23,9 +23,21 @@ module Echocat
   end
 
   def self.convert_file(csv_file_path)
-      csv_data = CSV.read(csv_file_path, headers: true, col_sep: ';', encoding: 'bom|utf-8')
+    csv_data = CSV.read(csv_file_path, headers: true, col_sep: ';', encoding: 'bom|utf-8')
 
-      csv_data.map { |row| row.to_h }
+    csv_data.map do |row|
+      hash = row.to_h
+      
+      if hash['authors']      
+        if hash['authors'].include?(',')
+          hash['authors'] = hash['authors'].split(',')
+        else
+          hash['authors']  = [hash['authors']]
+        end
+      end
+
+      hash
+    end
   end
 
   def self.authors
@@ -40,12 +52,11 @@ module Echocat
   end
 
   def self.find_by_key(search_word)
-    key = isbn?(search_word) ? 'isbn' : 'authors'
-    results =   @books_and_magazines.select{|data| data[key] == search_word}
-    
-    return results.first if key == 'isbn'
-
-    results
+    if isbn?(search_word) == 'isbn' 
+      @books_and_magazines.select{|data| data['isbn'] == search_word}.first
+    elsif isbn?(search_word) == 'authors'
+      @books_and_magazines.select{|data| data['authors'].include?(search_word)}
+    end
   end
 
   def self.isbn?(search_word)
