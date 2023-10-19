@@ -13,10 +13,10 @@ module Echocat
     @books_and_magazines = self.books_and_magazines
 
     # find a book or magazine by its isbn
-    find_by_key("5454-5587-3210")
+    find_by_key('isbn', '5454-5587-3210')
 
     # find a book or magazine by its author's email
-    find_by_key("null-walter@echocat.org")
+    find_by_key('authors', 'null-walter@echocat.org')
 
     # sort by title
     sort_by_title
@@ -51,16 +51,12 @@ module Echocat
     books_json + magazines_json
   end
 
-  def self.find_by_key(search_word)
-    if isbn?(search_word) == 'isbn' 
-      @books_and_magazines.select{|data| data['isbn'] == search_word}.first
-    elsif isbn?(search_word) == 'authors'
-      @books_and_magazines.select{|data| data['authors'].include?(search_word)}
+  def self.find_by_key(key, search_word)
+    if key == 'isbn' 
+      @books_and_magazines.select{|data| data[key] == search_word}.first
+    elsif key == 'authors'
+      @books_and_magazines.select{|data| data[key].include?(search_word)}
     end
-  end
-
-  def self.isbn?(search_word)
-    search_word.split('-').join.length == 12 && !search_word.to_i.zero?
   end
 
   def self.sort_by_title
