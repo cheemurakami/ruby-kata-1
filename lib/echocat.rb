@@ -4,6 +4,10 @@
 require 'csv'
 require 'json'
 
+AUTHORS_CSV_PATH = '/workspaces/ruby-kata-1/data/authors.csv'
+BOOKS_CSV_PATH = '/workspaces/ruby-kata-1/data/books.csv'
+MAGAZINES_CSV_PATH = '/workspaces/ruby-kata-1/data/magazines.csv'
+
 module Echocat
   def self.run
     # display authors
@@ -32,7 +36,7 @@ module Echocat
         if hash['authors'].include?(',')
           hash['authors'] = hash['authors'].split(',')
         else
-          hash['authors']  = [hash['authors']]
+          hash['authors'] = [hash['authors']]
         end
       end
 
@@ -41,12 +45,12 @@ module Echocat
   end
 
   def self.authors
-    convert_file('/workspaces/ruby-kata-1/data/authors.csv')
+    convert_file(AUTHORS_CSV_PATH)
   end
 
   def self.books_and_magazines
-    books_json = convert_file('/workspaces/ruby-kata-1/data/books.csv' )
-    magazines_json = convert_file('/workspaces/ruby-kata-1/data/magazines.csv')
+    books_json = convert_file(BOOKS_CSV_PATH)
+    magazines_json = convert_file(MAGAZINES_CSV_PATH)
 
     books_json + magazines_json
   end
