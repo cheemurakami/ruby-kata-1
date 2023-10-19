@@ -6,54 +6,53 @@ require 'json'
 
 module Echocat
   def self.run
-    csv_file_paths = [
-      '/workspaces/ruby-kata-1/data/authors.csv', 
-      '/workspaces/ruby-kata-1/data/books.csv', 
-      '/workspaces/ruby-kata-1/data/magazines.csv'
-    ]
+    # display authors
+    authors
 
-    convert_and_create_json_files(csv_file_paths)
-    find_by_isbn("5454-5587-3210")
-    find_by_authors_email("null-walter@echocat.org")
+    # display books and magazines
+    @books_and_magazines = self.books_and_magazines
+
+    # find a book or magazine by its isbn
+    find_by_key("5454-5587-3210")
+
+    # find a book or magazine by its author's email
+    find_by_key("null-walter@echocat.org")
+
+    # sort by title
     sort_by_title
   end
 
-
-  def self.convert_and_create_json_files(csv_file_paths)
-    csv_file_paths.each do |csv_file_path|
+  def self.convert_file(csv_file_path)
       csv_data = CSV.read(csv_file_path, headers: true, col_sep: ';', encoding: 'bom|utf-8')
 
-      json_data = csv_data.map { |row| row.to_h }
+      csv_data.map { |row| row.to_h }
+  end
 
-      json_file_path = csv_file_path.sub('.csv', '.json')
-      
-      File.open(json_file_path, 'w') do |file|
-        file.puts JSON.pretty_generate(json_data)
-      end
-    end
+  def self.authors
+    convert_file('/workspaces/ruby-kata-1/data/authors.csv')
   end
 
   def self.books_and_magazines
-    books_file = File.open 'data/books.json'
-    books_data = JSON.load books_file
-    magazines_file = File.open 'data/magazines.json'
-    magazines_data = JSON.load magazines_file
+    books_json = convert_file('/workspaces/ruby-kata-1/data/books.csv' )
+    magazines_json = convert_file('/workspaces/ruby-kata-1/data/magazines.csv')
 
-    books_data + magazines_data
+    books_json + magazines_json
   end
 
-  def self.find_by_isbn(isbn)
-    books_and_magazines_data = books_and_magazines    
-    books_and_magazines_data.select{|data| data['isbn'] == isbn}.first
+  def self.find_by_key(search_word)
+    key = isbn?(search_word) ? 'isbn' : 'authors'
+    results =   @books_and_magazines.select{|data| data[key] == search_word}
+    
+    return results.first if key == 'isbn'
+
+    results
   end
 
-  def self.find_by_authors_email(email)
-    books_and_magazines_data = books_and_magazines    
-    books_and_magazines_data.select{|data| data['authors'] == email}
+  def self.isbn?(search_word)
+    search_word.split('-').join.length == 12 && !search_word.to_i.zero?
   end
 
   def self.sort_by_title
-    books_and_magazines_data = books_and_magazines
-    books_and_magazines.sort_by{|data| data['title']}
+    @books_and_magazines.sort_by{|data| data['title']}
   end
 end
