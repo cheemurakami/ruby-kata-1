@@ -11,7 +11,6 @@ class Author
 
   def self.all
     @authors ||= initialized_authors
-    format_authors
   end
 
   def self.initialized_authors
@@ -31,18 +30,8 @@ class Author
 
     authors
   end
-  
-  def self.format_authors
-    formatted_authors = []
 
-    @authors.each do |author|
-      email = "Email: #{author.email}, "
-      first_name = "First name: #{author.first_name}, "
-      last_name = "Last name: #{author.last_name}"
-
-      formatted_authors << email + first_name + last_name
-    end
-
-    formatted_authors
+  def format
+    "Email: #{email}, First name: #{first_name}, Last name: #{last_name}"
   end
 end

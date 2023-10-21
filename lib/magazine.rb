@@ -32,4 +32,8 @@ class Magazine
 
     magazines
   end
+
+  def format
+    "Title: #{title}, isbn: #{isbn}, Authors: #{authors}, Published at: #{publishedAt}"
+  end
 end

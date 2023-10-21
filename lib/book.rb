@@ -32,4 +32,8 @@ class Book
 
     books
   end
+
+  def format
+    "Title: #{title}, isbn: #{isbn}, authors: #{authors}, description: #{description}"
+  end
 end
